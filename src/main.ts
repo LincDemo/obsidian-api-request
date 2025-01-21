@@ -79,6 +79,7 @@ export default class MainAPIR extends Plugin {
 		console.log('loading APIR');
 		await this.loadSettings();
 
+		// update status bar, on trigger by file-open and editor-change
 		async function updateStatusBar() {
 			const statusbar = document.getElementsByClassName("status-bar-item plugin-api-request");
 			while (statusbar[0]) {
@@ -107,6 +108,7 @@ export default class MainAPIR extends Plugin {
 			}
 		});
 
+		// Register `req` block
 		try {
 			this.registerMarkdownCodeBlockProcessor("req", async (source, el) => {
 				const sourceLines = source.split("\n");
@@ -120,6 +122,7 @@ export default class MainAPIR extends Plugin {
 
 				let response_disabled;
 
+				// Parsing code block
 				for (const line of sourceLines) {
 					const lowercaseLine = line.toLowerCase();
 					if (lowercaseLine.includes("method:")) {
@@ -207,21 +210,21 @@ export default class MainAPIR extends Plugin {
 						maketable = line.replace(/maketable:/i, "").trim();
 					}
 				}
-
 				if (sourceLines.includes("render")) {
 					render = true;
-				};
+				}
 
+				// Cycle request
 				for (let i = 0; i < reqRepeat.times; i++) {
 					try {
 						let responseData;
 
+						// Request and check response
 						if (!response_disabled) {
 							responseData  = await requestUrl({ url: URL, method, headers, body });
 						} else {
 							responseData = { json: JSON.parse(response_disabled) };
 						}
-
 						try {
 							// Check if the response is not JSON
 							if (!responseData.headers["content-type"].includes("json") && resType !== "json") {
@@ -251,6 +254,7 @@ export default class MainAPIR extends Plugin {
 							}
 						}
 
+						// Notify
 						if (notifyIf) {
 							const jsonPath = notifyIf[0];
 							const symbol = notifyIf[1];
@@ -272,6 +276,7 @@ export default class MainAPIR extends Plugin {
 							}
 						}
 
+						// Show
 						if (!show) {
 							if (properties.length > 0 && properties[0] !== '') {
 								el.createEl("strong", { text: "Error: Properties are not allowed without SHOW" });
@@ -516,6 +521,7 @@ export default class MainAPIR extends Plugin {
 			new Notice("Error: " + e.message);
 		}
 
+		// Paste response in current document
 		this.addCommand({
 			id: 'response-in-document',
 			name: 'Paste response in current document',

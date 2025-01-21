@@ -1,12 +1,20 @@
+/**
+ * General functions
+ */
+
 import { Notice, requestUrl, Editor } from 'obsidian';
 
-// Saves the response to the localStorage
+/**
+ * Saves the response to the localStorage
+ */
 export function saveToID(reqID: string, reqText: string) {
 	localStorage.setItem(reqID, reqText);
 }
 
-// Adds the copy button to the code block
-// Take from: https://github.com/jdbrice/obsidian-code-block-copy/
+/**
+ * Adds the copy button to the code block
+ * Take from: https://github.com/jdbrice/obsidian-code-block-copy/
+ */
 export function addBtnCopy(el: HTMLElement, copyThis: string) {
 	const btnCopy = el.createEl("button", { cls: "copy-req", text: "copy" });
 	btnCopy.addEventListener('click', function () {
@@ -22,8 +30,10 @@ export function addBtnCopy(el: HTMLElement, copyThis: string) {
 	});
 }
 
-// When more than one {} is defined in "format"
-// it will loop through the responses and replace the {} with the respective value
+/**
+ * When more than one `{}` is defined in "format"
+ * it will loop through the responses and replace the `{}` with the respective value
+ */
 export function replaceOrder(stri: string, val) {
 	let index = 0;
 	let replaced = stri.replace(/{}/g, function () {
@@ -37,8 +47,10 @@ export function replaceOrder(stri: string, val) {
 	return replaced;
 }
 
-// Check if the user wants a nested response
-// In other words, if "->" is present in "show"
+/**
+ * Check if the user wants a nested response
+ * In other words, if "->" is present in "show"
+ */
 export function nestedValue(data, key: string) {
 	const keySplit: string[] = key.split("->").map((item) => item.trim());
 	let value = data.json;
@@ -56,7 +68,9 @@ export function nestedValue(data, key: string) {
 	return value;
 }
 
-// Paste the response to the editor
+/**
+ * Paste the response to the editor
+ */
 export function toDocument(requestOptions: object, DataResponse: string, editor: Editor) {
 	requestUrl(requestOptions)
 		.then((data) => {
